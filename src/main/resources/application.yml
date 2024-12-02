@@ -1,0 +1,43 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1
+    username: sa
+    password: password
+    driver-class-name: org.h2.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  threads:
+    virtual:
+      enabled: true
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+    tags-sorter: alpha
+    syntax-highlight:
+      activated: true
+    try-it-out-enabled: true
+    default-model-expand-depth: -1
+  show-actuator: true
+  packages-to-scan: com.pokemon.soap_service.controller
+  default-consumes-media-type: text/xml
+  default-produces-media-type: text/xml
+
+server:
+  port: 8080
+
+logging:
+  level:
+    com.pokemon.soap_service: DEBUG
+    org.springframework.web: INFO
+    org.hibernate: INFO

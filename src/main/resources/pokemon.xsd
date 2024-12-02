@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:tns="http://pokemon.com/soap"
+           targetNamespace="http://pokemon.com/soap"
+           elementFormDefault="qualified">
+
+    <!-- Request y Response para abilities -->
+    <xs:element name="getPokemonAbilitiesRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="name" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="getPokemonAbilitiesResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="abilities" type="tns:abilities"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Request y Response para base_experience -->
+    <xs:element name="getPokemonBaseExperienceRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="name" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="getPokemonBaseExperienceResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="baseExperience" type="xs:int"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Request y Response para held_items -->
+    <xs:element name="getPokemonHeldItemsRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="name" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="getPokemonHeldItemsResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="heldItems" type="tns:heldItems"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Request y Response para id -->
+    <xs:element name="getPokemonIdRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="name" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="getPokemonIdResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="id" type="xs:int"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Request y Response para name -->
+    <xs:element name="getPokemonNameRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="name" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="getPokemonNameResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="name" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Request y Response para location_area_encounters -->
+    <xs:element name="getPokemonLocationRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="name" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="getPokemonLocationResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="locationAreaEncounters" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Tipos comunes -->
+    <xs:complexType name="abilities">
+        <xs:sequence>
+            <xs:element name="ability" type="xs:string" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="heldItems">
+        <xs:sequence>
+            <xs:element name="item" type="xs:string" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

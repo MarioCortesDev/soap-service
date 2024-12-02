@@ -1,0 +1,159 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.4.0'
+    id 'io.spring.dependency-management' version '1.1.6'
+    id 'org.sonarqube' version '4.4.1.3373'
+    id 'jacoco'
+}
+
+group = 'com.pokemon'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+compileJava.options.encoding = 'UTF-8'
+compileTestJava.options.encoding = 'UTF-8'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+    xjc
+    cucumberRuntime {
+        extendsFrom testImplementation
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Spring
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-web-services'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    // WSDL y JAXB
+    implementation 'wsdl4j:wsdl4j'
+    implementation 'org.glassfish.jaxb:jaxb-runtime'
+    implementation 'org.springframework.ws:spring-ws-core:4.0.11'
+
+    // XJC
+    xjc 'org.glassfish.jaxb:jaxb-xjc:4.0.4'
+    xjc 'org.glassfish.jaxb:jaxb-runtime:4.0.4'
+
+    // Database
+    runtimeOnly 'com.h2database:h2'
+
+    // Lombok
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // OpenAPI
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.4.0'
+
+    // Test
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'io.projectreactor:reactor-test'
+    
+    // Cucumber (solo una vez)
+    testImplementation 'io.cucumber:cucumber-java:7.15.0'
+    testImplementation 'io.cucumber:cucumber-junit:7.15.0'
+    testImplementation 'io.cucumber:cucumber-spring:7.15.0'
+    testImplementation 'io.cucumber:cucumber-junit-platform-engine:7.15.0'
+    testImplementation 'org.junit.platform:junit-platform-suite:1.10.2'
+}
+
+task generateJaxbClasses {
+    def outputDir = file("${buildDir}/generated-sources/jaxb")
+    def xsdDir = file("src/main/resources")
+    def xsdFile = file("src/main/resources/pokemon.xsd")
+
+    inputs.file xsdFile
+    outputs.dir outputDir
+
+    doLast {
+        outputDir.mkdirs()
+        ant.taskdef(name: 'xjc',
+                classname: 'com.sun.tools.xjc.XJCTask',
+                classpath: configurations.xjc.asPath)
+
+        ant.xjc(destdir: outputDir,
+                package: 'com.pokemon.soap',
+                schema: xsdFile,
+                encoding: 'UTF-8') {
+            arg(value: '-extension')
+            arg(value: '-encoding')
+            arg(value: 'UTF-8')
+            produces(dir: outputDir, includes: '**/*.java')
+        }
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+task cucumber() {
+    dependsOn assemble, testClasses
+    doLast {
+        javaexec {
+            mainClass = "io.cucumber.core.cli.Main"
+            classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
+            args = [
+                '--plugin', 'pretty',
+                '--plugin', 'html:build/reports/cucumber.html',
+                '--glue', 'com.pokemon.soap_service.cucumber',
+                'src/test/resources/features'
+            ]
+        }
+    }
+}
+
+test {
+    useJUnitPlatform()
+    finalizedBy jacocoTestReport
+    systemProperty('cucumber.junit-platform.naming-strategy', 'long')
+    systemProperty('cucumber.plugin', 'pretty, html:build/reports/cucumber.html')
+    systemProperty('cucumber.glue', 'com.pokemon.soap_service.cucumber')
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir "${buildDir}/generated-sources/jaxb"
+        }
+    }
+}
+
+compileJava.dependsOn generateJaxbClasses
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.required = true
+        html.required = true
+    }
+}
+
+sonarqube {
+    properties {
+        property 'sonar.gradle.skipCompile', 'true'
+        property 'sonar.host.url', 'http://localhost:9000'
+        property 'sonar.token', 'sqp_557a07f365c853ef82dee60ca6770de1df4e1ceb'
+        property 'sonar.projectKey', 'pokemon-soap-service'
+        property 'sonar.projectName', 'Pokemon SOAP Service'
+        property 'sonar.coverage.jacoco.xmlReportPaths', "${buildDir}/reports/jacoco/test/jacocoTestReport.xml"
+        property 'sonar.scm.provider', 'git'
+        property 'sonar.java.source', '17'
+        property 'sonar.sourceEncoding', 'UTF-8'
+    }
+}

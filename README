@@ -1,0 +1,21 @@
+# Construir el proyecto
+```./gradlew clean build```
+
+# Ejecutar pruebas
+```./gradlew test```
+
+# Ejecutar SonarQube
+#!/bin/bash
+```
+./gradlew sonarqube \
+  -Dsonar.projectKey=pokemon-soap-service \
+  -Dsonar.host.url=http://localhost:9000 \
+  -Dsonar.login=your-sonar-token
+  ```
+
+# Ejecutar docker
+
+#!/bin/bash
+./gradlew clean build
+docker-compose build
+docker-compose up -d
