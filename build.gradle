@@ -148,7 +148,7 @@ sonarqube {
     properties {
         property 'sonar.gradle.skipCompile', 'true'
         property 'sonar.host.url', 'http://localhost:9000'
-        property 'sonar.token', 'sqp_557a07f365c853ef82dee60ca6770de1df4e1ceb'
+        property 'sonar.token', 'sqp_ea4599aa68c84d45b9b79ec7ee19156d7663123d'
         property 'sonar.projectKey', 'pokemon-soap-service'
         property 'sonar.projectName', 'Pokemon SOAP Service'
         property 'sonar.coverage.jacoco.xmlReportPaths', "${buildDir}/reports/jacoco/test/jacocoTestReport.xml"
